@@ -1,31 +1,80 @@
 <!DOCTYPE html>
-<html><head><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>JBDANZSTORE OFFICIAL</title>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>FF MINI BATTLE - JBDANZSTORE</title>
 <style>
-body{margin:0;background:#0f0f0f;color:#fff;font-family:Arial;text-align:center}
-.top{background:#000;padding:15px;color:gold;font-weight:bold}
-.hero{background:linear-gradient(45deg,#ff8c00,#a855f7);padding:20px}
-.box{background:#1a1a1a;margin:15px;padding:15px;border-radius:15px;border:1px solid #333}
-.link{display:block;background:#222;padding:14px;margin:10px 0;border-radius:10px;color:#fff;text-decoration:none;border:1px solid #333;font-weight:bold}
-.link:hover{background:gold;color:#000}
-input{width:85%;padding:12px;margin:5px;border-radius:8px;border:1px solid #444;background:#000;color:#fff}
-button{width:90%;padding:13px;background:gold;border:none;border-radius:10px;font-weight:bold;margin-top:10px}
-</style></head><body>
-<div class="top">JBDANZSTORE</div>
-<div class="hero"><h2>🔥 JBDANZSTORE 🔥</h2><p>REDEEM: JBMrDANZ1A33</p></div>
+body{margin:0;background:#0f0f0f;color:#fff;font-family:Arial;text-align:center;overflow:hidden}
+#top{background:#000;padding:12px;color:gold;font-weight:bold;display:flex;justify-content:space-between}
+#game{width:100%;height:60vh;background:radial-gradient(#222,#000);position:relative;overflow:hidden;border-top:2px solid gold;border-bottom:2px solid gold}
+.player{position:absolute;width:50px;height:50px;background:gold;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;left:50%;top:70%;transform:translate(-50%,-50%);z-index:10}
+.enemy{position:absolute;width:40px;height:40px;background:red;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.bullet{position:absolute;width:8px;height:12px;background:gold;border-radius:4px}
+.btn{padding:12px 20px;background:gold;border:none;border-radius:10px;font-weight:bold;margin:5px}
+.box{background:#1a1a1a;margin:10px;padding:10px;border-radius:10px}
+</style>
+</head>
+<body>
+<div id="top"><span>🔥 JBDANZSTORE FF</span><span id="score">SCORE: 0</span></div>
+<div id="game"><div class="player" id="p">🔫</div></div>
 <div class="box">
-<h3>🎮 REDEEM 2000 DM</h3>
-<input id="a" placeholder="ID Free Fire">
-<input id="b" value="JBMrDANZ1A33">
-<button onclick="if(b.value.toUpperCase()=='JBMRDANZ1A33'){document.getElementById('ok').innerHTML='✅ SELAMAT ID '+a.value+' DAPAT 2000 DM!';document.getElementById('ok').style.display='block'}else{alert('Kode salah')}">REDEEM</button>
-<div id="ok" style="display:none;background:#0a3a0a;padding:12px;border-radius:10px;margin-top:10px"></div>
+<p>Geser jari di area game buat gerakin player!</p>
+<button class="btn" onclick="shoot()">🔥 TEMBAK</button>
+<button class="btn" onclick="location.reload()">RESTART</button>
+<p id="info">Kalahin musuh sebanyak-banyaknya! Kalo kena musuh = GAME OVER</p>
 </div>
 <div class="box">
-<h3>🔗 SEMUA LINK AKU DI SINI</h3>
-<a class="link" href="https://lynk.id/jbdanzstore">💎 TOP UP DI LYNK.ID/JBDANZSTORE</a>
-<a class="link" href="https://wa.me/628xxxx">💬 WHATSAPP ADMIN</a>
-<a class="link" href="https://tiktok.com/@jbdanzstore">🎵 TIKTOK</a>
-<a class="link" href="https://youtube.com">▶️ YOUTUBE</a>
-<p style="color:#666;font-size:10px">Ganti 628xxxx jadi nomor WA asli kamu bos!</p>
+<a href="https://lynk.id/jbdanzstore" style="color:gold;text-decoration:none">💎 TOP UP DI LYNK.ID/JBDANZSTORE</a>
+<p>REDEEM CODE: JBMrDANZ1A33 = 2000 DM</p>
 </div>
-</body></html>
+
+<script>
+let g=document.getElementById('game'),p=document.getElementById('p'),score=0,s=0,x=50,y=70,gameOver=false;
+let scoreEl=document.getElementById('score');
+
+g.addEventListener('touchmove',e=>{
+ if(gameOver)return;
+ let r=g.getBoundingClientRect();
+ x=((e.touches[0].clientX-r.left)/r.width)*100;
+ y=((e.touches[0].clientY-r.top)/r.height)*100;
+ p.style.left=x+'%';p.style.top=y+'%';
+ e.preventDefault();
+},{passive:false});
+
+function shoot(){
+ if(gameOver)return;
+ let b=document.createElement('div');b.className='bullet';
+ b.style.left=x+'%';b.style.top=y+'%';
+ g.appendChild(b);
+ let it=setInterval(()=>{
+   let top=parseFloat(b.style.top);
+   b.style.top=(top-2)+'%';
+   if(top<0){clearInterval(it);b.remove();}
+   document.querySelectorAll('.enemy').forEach(en=>{
+     if(Math.abs(parseFloat(b.style.left)-parseFloat(en.style.left))<5 && Math.abs(parseFloat(b.style.top)-parseFloat(en.style.top))<8){
+       en.remove();b.remove();clearInterval(it);s+=10;scoreEl.innerText='SCORE: '+s;
+       if(s>=100)document.getElementById('info').innerHTML='🎉 MENANG! REDEEM: JBMrDANZ1A33 2000 DM!';
+     }
+   });
+ },20);
+}
+
+setInterval(()=>{
+ if(gameOver)return;
+ let en=document.createElement('div');en.className='enemy';en.innerText='💀';
+ en.style.left=Math.random()*90+'%';en.style.top='0%';
+ g.appendChild(en);
+ let it=setInterval(()=>{
+   if(gameOver){clearInterval(it);return;}
+   let top=parseFloat(en.style.top);en.style.top=(top+1.5)+'%';
+   if(top>95){clearInterval(it);en.remove();}
+   if(Math.abs(parseFloat(en.style.left)-x)<7 && Math.abs(top-y)<10){
+     gameOver=true;
+     document.getElementById('info').innerHTML='💀 GAME OVER! Score: '+s+'<br>REDEEM CODE: JBMrDANZ1A33';
+     alert('GAME OVER! Score kamu: '+s+'\nREDEEM CODE: JBMrDANZ1A33');
+   }
+ },30);
+},900);
+</script>
+</body>
+</html>
